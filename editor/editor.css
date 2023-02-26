@@ -1,0 +1,214 @@
+/* body {
+    margin: 0;
+    padding-top: 50px
+}
+
+.redcolor i {
+    color: red
+}
+
+.greencolor i {
+    color: green
+}
+
+.yellowcolor i {
+    color: #ff0
+}
+
+.redbg {
+    background-color: red;
+    color: #fff
+}
+
+html {}
+
+canvas {
+    background-color: #fafafa;
+    background-image: url(/editor/chess.png);
+    background-repeat: repeat;
+    width: 100%;
+    display: block
+}
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none
+}
+
+.navbar {
+    margin-bottom: 0
+}
+
+.no-padding {
+    padding: 0
+}
+
+.side {
+    margin: 0;
+    padding: 0;
+    width: 50%;
+    position: relative;
+    min-height: 1px
+}
+
+#leftSide,
+#rightSide {
+    margin: 0;
+    padding: 0;
+    border-right: 1px solid #000
+}
+
+.btn img {
+    width: 24px
+}
+
+.btn-group a,
+.btn-group-vertical a,
+.navbar-btn a {
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px
+}
+
+body {
+    overflow: hidden
+}
+
+#wrapper {
+    -webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    transition: all .5s ease
+}
+
+#wrapper.toggled {
+    padding-right: 250px
+}
+
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    right: 250px;
+    width: 0;
+    height: 100%;
+    margin-right: -250px;
+    overflow-y: auto;
+    background: #000
+}
+
+#sidebar-wrapper .nav-tabs img {
+    width: 28px
+}
+
+#sidebar-wrapper .nav-tabs li a {
+    padding: 2px;
+    height: 32px
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+    padding: 10px
+}
+
+#page-content-wrapper {
+    width: 100%;
+    position: absolute
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px
+}
+
+.nav li {
+    display: table-cell !important;
+    width: 1%
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding: 0
+    }
+
+    #sidebar-wrapper {
+        width: 0
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 250px;
+        padding: 10px
+    }
+
+    #page-content-wrapper {
+        position: relative;
+        padding: 0
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0
+    }
+}
+
+.carousel-inner>.item {
+    background-color: #fff
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: .7;
+    -webkit-transition: .2s;
+    transition: opacity .2s
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #000;
+    cursor: pointer
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #000;
+    cursor: pointer
+}
+
+@media(max-width:360px) {
+    .hidden-xxs {
+        display: none !important
+    }
+}
+
+.toolbar-button-no-icon {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important
+}
+
+.dropdown-menu img {
+    width: 24px
+}
+
+.form-horizontal {
+    padding-top: 10px
+}
+
+.form-horizontal .control-label {
+    padding-top: 7px;
+    margin-bottom: 0;
+    text-align: right
+} */

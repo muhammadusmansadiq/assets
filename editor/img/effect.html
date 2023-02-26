@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Image Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.3/fabric.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.3.0/fabric.min.js"></script> -->
+
+    <script>
+        localStorage.clear();
+    </script>
+    <!-- <script>    checkAndCleanStorage()</script> -->
+    <style>
+        /* Preloader styles */
+        #preloader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            opacity: 0.8;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #preloader .loader {
+            border: 10px solid #f3f3f3;
+            border-top: 10px solid #3498db;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            top: 50%;
+            left: 50%;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Content styles */
+        #containers {
+            display: none;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+
+
+
+    <div class="containers">
+        <div style="display: none;">
+            <img src="" alt="" id="myImage" width="500px" height="auto">
+
+        </div>
+        <div class="row">
+            <div class="column1" id="column1">
+                <div class="button-row">
+                    <button class="toggle-btn active" data-target="#eraser-div" data-act="setType" data-arg="erase"
+                        onclick="showEditRow()">Eraser</button>
+                    <button class="toggle-btn" data-target="#eraser-div" data-act="setType" data-arg="foreground"
+                        onclick="showEditRow()">Restore</button>
+                    <button class="toggle-btn" data-target="#image-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Image</button>
+                    <button class="toggle-btn" data-target="#text-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Text</button>
+                    <button class="toggle-btn" data-target="#background-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Background</button>
+                    <button class="toggle-btn" data-target="#shadow-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Shadow</button>
+                    <button class="toggle-btn" data-target="#effects-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Effects</button>
+                    <button class="toggle-btn" data-target="#download-div" data-act="downloadLowRes"
+                        onclick="showEditorRow()">Download</button>
+                </div>
+
+                <div>
+                    <!-- eraser restore  -->
+                    <div class="erow" id="edit-row3" style="display: none;">
+                        <div class="col-12 d-flex justify-content-center edit-row">
+                            <button class="actionBtn mr-3" data-act="undo" title="Undo"><i
+                                    class="fas fa-undo"></i></button>
+                            <button class="disabled actionBtn mr-3" data-act="redo" title="Redo"><i
+                                    class="fas fa-redo"></i></button>
+
+                            <button class="actionBtn mr-3" data-act="zoomIn" title="Zoom In"><i
+                                    class="fas fa-search-plus"></i></button>
+                            <button class="actionBtn mr-3" data-act="zoomOut" title="Zoom Out"><i
+                                    class="fas fa-search-minus"></i></button>
+                            <button class="actionBtn mr-3" data-act="zoomToOrig" title="Original Size"><i
+                                    class="fas fa-compress"></i></button>
+                            <button class="actionBtn mr-3" data-act="zoomToFit" title="Zoom To Fit"><i
+                                    class="fas fa-arrows-alt"></i></button>
+
+                            <button
+                                class="btn btn-default active toolbar-button-no-icon actionBtn mr-3 d-block d-sm-none"
+                                style="border-color: #04AA6D;" data-act="showLeft" title="Mask">
+                                <input type="radio" name="tool">
+                                <span class="small"><b>Mask</b></span>
+                            </button>
+                            <button class="btn btn-default toolbar-button-no-icon actionBtn mr-3 d-block d-sm-none"
+                                style="border-color: #04AA6D;" data-act="showRight" title="Result">
+                                <input type="radio" name="tool">
+                                <span class="small"><b>Result</b></span>
+                            </button>
+
+                            <button class="actionBtn mr-3" data-act="clear" title="Clear Selections"><i
+                                    class="fas fa-eraser"></i></button>
+
+                            <!-- <button class="btn btn-default active actionBtn mr-3" data-act="setType" data-arg="foreground"
+                            title="Foreground"><i class="fas fa-circle"></i></button>
+                        <button class="actionBtn mr-3 mr-3" data-act="setType" data-arg="erase"
+                            title="Erase Markings"><i class="fas fa-eraser"></i></button> -->
+                            <button class="actionBtn mr-3 mr-3" data-act="setType" data-arg="move" title="Move"><i
+                                    class="fas fa-arrows-alt"></i></button>
+
+                            <input type="range" min="1" max="100" value="30" class="slider smaller" id="markerSize"
+                                title="Marker Size" style="max-width: 100px;">
+                        </div>
+
+                    </div>
+                    <!-- erase restore canvas  -->
+                    <div class="erow" id="edit-row4" style="display: none;">
+                        <div class="col-12 row" style="background-color: white; background-image: url(che.png); ">
+                            <div class="col-sm-6" id="leftSide">
+                                <canvas id="leftCanvas" width="834" height="700"
+                                    style="cursor: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAAAXNSR0IArs4c6QAAAW9JREFUSEvFly1Tw0AQhp+VYLFg0VgsWLBoLA4GBxo0roNrLZbaIMGCpLb8hlaGefMxaY6EuTSX3M7E3e6ze7fZD8NXUo6AQ2Af2AUOCtUlsAJ+gG+MLx+T9u+hNAOcAKcFzMemnEiANyxzqFHawSnHwEUHoAsQdIbx2URuBqcZUFGGkATjxTX0F5xyCVm0IeUdY7ZpsA4OG6nreC3yCpy/qaIdUiblm+fgPHsfeiSSr7NKuHtlewk+B858tXuem2O8luAnYKenQV/1FcaNkVekK1+tQOcmAof8Z339SgS+LWqwr1KIcwuBH4G9ENY62FgK/NxBIdjRqOBoVx0tuaL9TpEKSN4kxiyZa4zr6E1CbVHZPXSjWAN3VVvMr3uMt3YGgbIeDdswsj5cosYa9j4wpu3D3jCR1yJtj7iC6801/G2bcEqkabeBvoIr2zXY6/N1QECtMBpnt1hh3AZYLW1a1uTE5tImmJa3RVuErrlfChtgMUeQA88AAAAASUVORK5CYII=&quot;) 15 15, auto;">
+                                    Your browser does not support the HTML 5 Canvas.
+                                </canvas>
+                            </div>
+                            <div class="col-sm-6" id="rightSide">
+                                <canvas id="rightCanvas" width="834" height="700" style="cursor: move;">
+                                    Your browser does not support the HTML 5 Canvas.
+                                </canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- editor row buttons  -->
+                    <div class="erow" id="editor-row1">
+                        <div class="col-12 d-flex justify-content-center editor-row">
+                            <button id="undo" class="actionBtn mr-3">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <button id="redo" class="actionBtn mr-3">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                            <button id="zoomInBtn" class="actionBtn mr-3">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button id="zoomOutBtn" class="actionBtn mr-3">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button id="fitToScreenBtn" class="actionBtn mr-3"><i class="fas fa-expand"></i></button>
+
+                        </div>
+                    </div>
+                    <div class="erow" id="editor-row2">
+
+
+                        <div id="canvas-div" class="col-md-12 order-md-1 order-1"
+                            style="background-color: white; background-image: url(che.png); ">
+                            <canvas id="canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="column2">
+                <div class="toggle-div active" id="eraser-div">
+                    <h3>Eraser</h3>
+                    <p>Eraser content goes here...</p>
+                    <div>
+                        <div class="form-group">
+                            <label for="offsetBoundary" class="form-label">Offset the Boundary</label>
+                            <select class="form-select" id="offsetBoundary" data-layer="mask" data-property="offset">
+                                <option value="-15">-10</option>
+                                <option value="-9">-9</option>
+                                <option value="-8">-8</option>
+                                <option value="-7">-7</option>
+                                <option value="-6">-6</option>
+                                <option value="-5">-5</option>
+                                <option value="-4">-4</option>
+                                <option value="-3">-3</option>
+                                <option value="-2">-2</option>
+                                <option value="-1">-1</option>
+                                <option value="0" selected="selected">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="featheringRadius" class="form-label">Feathering</label>
+                            <select class="form-select" id="featheringRadius" data-layer="mask"
+                                data-property="feathering">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toggle-div" id="image-div">
+                    <h3>Image</h3>
+                    <p>Image content goes here...</p>
+
+                    <!-- Rotate Feature -->
+                    <div class="row mb-3">
+                        <div class="col-12 text-center">
+                            <h5>Rotate</h5>
+                        </div>
+                        <div class="col-6">
+                            <button id="rotateRightBtn" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-undo"></i> Rotate Right
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button id="rotateLeftBtn" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-redo"></i> Rotate Left
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <!-- crop Feature -->
+                    <div class="row mb-3">
+                        <div class="col-12 text-center">
+                            <h5>Crop</h5>
+                        </div>
+                        <div class="col-6">
+                            <button id="startCrop" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-crop"></i> Crop
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button id="crop" class="btn btn-outline-primary btn-block disabled">
+                                <i class="fas fa-check"></i> Done
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Flip Feature -->
+                    <div class="row mb-3">
+                        <div class="col-12 text-center">
+                            <h5>Flip</h5>
+                        </div>
+                        <div class="col-6">
+                            <button id="flipVBtn" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-arrows-alt-v"></i> Flip Vertical
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button id="flipHBtn" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-arrows-alt-h"></i> Flip Horizontal
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Adjustment Feature -->
+                    <div class="row mb-3">
+                        <div class="col-12 text-center">
+                            <h5>Adjustment</h5>
+                        </div>
+                        <div class="col-10">
+                            <label for="brightness-slider">Brightness</label>
+                            <input type="range" min="-1" max="1" step="0.1" id="brightness-slider" class="form-control">
+                        </div>
+                        <div class="col-10">
+                            <label for="contrast-slider">Contrast</label>
+                            <input type="range" min="-1" max="1" step="0.1" id="contrast-slider" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="toggle-div" id="text-div">
+                    <h3>Text</h3>
+                    <p>Text content goes here...</p>
+
+                    <div class="form-group">
+                        <label for="addTextButton">Add New Text Block</label>
+                        <button id="addTextButton" class="btn btn-primary" title="Add new text block to canvas">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deleteTextButton">Delete Text Block</label>
+                        <button id="deleteTextButton" class="btn btn-danger is-text-active"
+                            title="Delete selected text block">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="font-size">Font Size</label>
+                        <input type="range" min="6" max="100" value="12" id="font-size"
+                            class="form-control-range is-text-active">
+                        <span id="font-size-value" class="badge badge-secondary ml-2">12</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="letter-spacing">Letter Spacing</label>
+                        <input type="range" min="-10" max="500" value="0" id="letter-spacing"
+                            class="form-control-range is-text-active">
+                        <span id="letter-spacing-value" class="badge badge-secondary ml-2">0</span>
+                    </div>
+                    <h5>Font Family</h5>
+                    <div class="form-group">
+                        <select id="font-select" class="form-control is-text-active">
+                            <option value="Arial">Arial</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                            <option value="Verdana">Verdana</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Palatino">Palatino</option>
+                            <option value="Garamond">Garamond</option>
+                            <option value="Bookman">Bookman</option>
+                            <option value="Comic Sans MS">Comic Sans MS</option>
+                            <option value="Arial Black">Arial Black</option>
+                            <option value="Impact">Impact</option>
+                            <option value="Trebuchet MS">Trebuchet MS</option>
+                            <option value="Tahoma">Tahoma</option>
+                            <option value="Geneva">Geneva</option>
+                        </select>
+                    </div>
+                    <h5>Text Alignment</h5>
+                    <div class="form-group text-center">
+                        <button id="textLeft" class="btn btn-secondary is-text-active">
+                            <i class="fas fa-align-left"></i> Align Left
+                        </button>
+                        <button id="textCenter" class="btn btn-secondary is-text-active">
+                            <i class="fas fa-align-center"></i> Align Center
+                        </button>
+                        <button id="textRight" class="btn btn-secondary is-text-active">
+                            <i class="fas fa-align-right"></i> Align Right
+                        </button>
+                    </div>
+                    <h5>Text Style</h5>
+                    <div class="form-group">
+                        <button id="textBold" class="btn btn-secondary btn-sm is-text-active">
+                            <i class="fas fa-bold"></i> Bold
+                        </button>
+                        <button id="textItalic" class="btn btn-secondary btn-sm is-text-active">
+                            <i class="fas fa-italic"></i> Italic
+                        </button>
+                        <button id="textUnderline" class="btn btn-secondary btn-sm is-text-active">
+                            <i class="fas fa-underline"></i> Underline
+                        </button>
+                    </div>
+                    <h5>Text Color</h5>
+                    <div class="form-group">
+                        <input type="color" id="text-color" class="form-control form-control-sm is-text-active">
+                    </div>
+                    <h5>Text Rotation</h5>
+                    <div class="form-group">
+                        <label for="text-rotation">Text Opacity</label>
+
+                        <span id="text-rotation-value">Pending Imprlemetation</span>
+                    </div>
+                </div>
+                <div class="toggle-div" id="background-div">
+                    <h3>Background</h3>
+                    <p>Background content goes here...</p>
+                    <div class="background-options">
+                        <h3>Predefined Colors:</h3>
+                        <div class="color-btns">
+                            <button class="color-btn" style="background-color: #ffffff" onclick="setBgColor('#ffffff')"
+                                title="White"></button>
+                            <button class="color-btn" style="background-color: #000000" onclick="setBgColor('#000000')"
+                                title="Black"></button>
+                            <button class="color-btn" style="background-color: #F44336" onclick="setBgColor('#F44336')"
+                                title="Red"></button>
+                            <button class="color-btn" style="background-color: #3F51B5" onclick="setBgColor('#3F51B5')"
+                                title="Indigo"></button>
+                            <button class="color-btn" style="background-color: #4CAF50" onclick="setBgColor('#4CAF50')"
+                                title="Green"></button>
+                            <button class="color-btn" style="background-color: #9C27B0" onclick="setBgColor('#9C27B0')"
+                                title="Purple"></button>
+                            <button class="color-btn" style="background-color: #FFEB3B" onclick="setBgColor('#FFEB3B')"
+                                title="Yellow"></button>
+                            <button class="color-btn" style="background-color: #2196F3" onclick="setBgColor('#2196F3')"
+                                title="Blue"></button>
+                            <button class="color-btn" style="background-color: #009688" onclick="setBgColor('#009688')"
+                                title="Teal"></button>
+                            <button class="color-btn" style="background-color: #795548" onclick="setBgColor('#795548')"
+                                title="Brown"></button>
+                            <button class="color-btn" style="background-color: #607D8B" onclick="setBgColor('#607D8B')"
+                                title="Grey"></button>
+                            <button class="color-btn" style="background-color: #E91E63" onclick="setBgColor('#E91E63')"
+                                title="Pink"></button>
+                            <button class="color-btn" style="background-color: #9E9E9E" onclick="setBgColor('#9E9E9E')"
+                                title="Dark Grey"></button>
+                            <button class="color-btn" style="background-color: #8BC34A" onclick="setBgColor('#8BC34A')"
+                                title="Light Green"></button>
+                            <button class="color-btn" style="background-color: #CDDC39" onclick="setBgColor('#CDDC39')"
+                                title="Lime"></button>
+                            <button class="color-btn" style="background-color: #FF9800" onclick="setBgColor('#FF9800')"
+                                title="Orange"></button>
+                            <button class="color-btn" style="background-color: #FF5722" onclick="setBgColor('#FF5722')"
+                                title="Deep Orange"></button>
+                            <button class="color-btn" style="background-color: #03A9F4" onclick="setBgColor('#03A9F4')"
+                                title="Light Blue"></button>
+                        </div>
+                        <h3>Custom Color:</h3>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="bgColorPicker" value="#ffffff" onchange="setBgColor(this.value)">
+                            <label for="bgColorPicker">Choose a custom color</label>
+                        </div>
+                        <h3>Predefined Images:</h3>
+                        <div class="image-btns">
+                            <button class="image-btn" onclick="setBgImage('bg1.jpg')">
+                                <img src="bg1.jpg" alt="Background 1">
+                                <span class="image-btn-title">Background 1</span>
+                            </button>
+                            <button class="image-btn" onclick="setBgImage('bg2.jpg')">
+                                <img src="bg2.jpg" alt="Background 2">
+                                <span class="image-btn-title">Background 2</span>
+                            </button>
+                            <button class="image-btn" onclick="setBgImage('bg3.jpg')">
+                                <img src="bg3.jpg" alt="Background 3">
+                                <span class="image-btn-title">Background 3</span>
+                            </button>
+                            <button class="image-btn" onclick="setBgImage('bg4.jpg')">
+                                <img src="bg4.jpg" alt="Background 4">
+                                <span class="image-btn-title">Background 4</span>
+                            </button>
+                            <button class="image-btn" onclick="setBgImage('bg5.jpg')">
+                                <img src="bg5.jpg" alt="Background 5">
+                                <span class="image-btn-title">Background 5</span>
+                            </button>
+                        </div>
+                        <h3>Custom Image:</h3>
+                        <div class="custom-image-wrapper">
+                            <input type="file" id="bgImagePicker" accept="image/*"
+                                onchange="setBgImage(URL.createObjectURL(this.files[0]))">
+                            <label for="bgImagePicker">Upload a custom image</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="toggle-div" id="shadow-div">
+                    <h3>Shadow</h3>
+                    <p>Shadow content goes here...</p>
+                    <div class="form-group">
+                        <label for="shadowToggle">Shadow:</label>
+                        <button id="shadowToggle" class="btn btn-primary float-right">Activate</button>
+                        <p class="help-text">Toggle the shadow on or off</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shadowOpacity">Shadow Opacity:</label>
+                        <input id="shadowOpacity" type="range" min="0" max="1" step="0.01" value="0.2"
+                            class="float-right">
+                        <p class="help-text">Adjust the opacity of the shadow</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shadowOffsetX">Shadow X Offset:</label>
+                        <input id="shadowOffsetX" type="range" min="-100" max="100" step="1" value="10"
+                            class="float-right">
+                        <p class="help-text">Move the shadow horizontally</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shadowOffsetY">Shadow Y Offset:</label>
+                        <input id="shadowOffsetY" type="range" min="-100" max="100" step="1" value="10"
+                            class="float-right">
+                        <p class="help-text">Move the shadow vertically</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shadowColor">Shadow Color:</label>
+                        <input id="shadowColor" type="color" value="#000000" class="float-right">
+                        <input type="hidden" id="hexValue">
+                        <p class="help-text">Choose the color of the shadow</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shadowBlur">Shadow Blur:</label>
+                        <input id="shadowBlur" type="range" min="0" max="100" step="1" value="10" class="float-right">
+                        <p class="help-text">Adjust the size of the shadow</p>
+                    </div>
+                </div>
+                <div class="toggle-div" id="effects-div">
+                    <h3>Effects</h3>
+                    <p>Effects content goes here...</p>
+                    <button id="grayscale-button">Grayscale</button>
+                    <button id="sepia-button">Sepia</button>
+                    <button id="invert-button">Invert</button>
+                    <button id="blur-button">Blur</button>
+
+                    <button id="hue-rotation-button">Hue Rotation</button>
+                    <button id="pixelate-button">Pixelate</button>
+                    <button id="saturation-button">Saturation</button>
+                    <button id="vintage-button">Vintage</button>
+                    <button id="emboss-button">Emboss</button>
+                    <button id="noise-button">Noise</button>
+                    <button id="color-correction-button">Color Correction</button>
+                    <form>
+                        <label for="blend-color-input">Blend color:</label>
+                        <input type="color" id="blend-color-input" value="#F7D1E5">
+                        <br>
+                        <label for="opacity-input">Opacity:</label>
+                        <input type="range" id="opacity-input" min="0" max="1" step="0.05" value="0.2">
+                    </form>
+
+                    <button id="pastel-button">Pastel</button>
+
+
+
+                </div>
+                <div class="toggle-div" id="download-div">
+                    <h3>Download</h3>
+                    <p>Download content goes here...</p>
+                    <h2>Predefined sizes:</h2>
+                    <div class="size-btns">
+                        <button class="size-btn" onclick="setCanvasSize(200, 300)">
+                            <img src="" id="canvasImg" alt="200x300">
+                            <p>200x300</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(400, 600)">
+                            <img src="400x600.png" alt="400x600">
+                            <p>400x600</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(600, 900)">
+                            <img src="600x900.png" alt="600x900">
+                            <p>600x900</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(800, 1200)">
+                            <img id="canvasImg" src="" alt="Canvas Image">
+
+                            <p>800x1200</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(1000, 1500)">
+                            <img src="1000x1500.png" alt="1000x1500">
+                            <p>1000x1500</p>
+                        </button>
+                    </div>
+                    <h2>Recommended sizes:</h2>
+                    <div class="size-btns">
+                        <button class="size-btn" onclick="setCanvasSize(1280, 720)">
+                            <img src="1280x720.png" alt="1280x720">
+                            <p>YouTube</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(1080, 1080)">
+                            <img src="1080x1080.png" alt="1080x1080">
+                            <p>Instagram</p>
+                        </button>
+                        <button class="size-btn" onclick="setCanvasSize(820, 462)">
+                            <img src="820x462.png" alt="820x462">
+                            <p>Facebook</p>
+                        </button>
+                    </div>
+                    <h2>Custom size:</h2>
+                    <div class="custom-size">
+                        <input type="text" id="widthInput" placeholder="Width">
+                        <input type="text" id="heightInput" placeholder="Height">
+                        <button id="customSizeBtn" disabled
+                            onclick="setCanvasSize(document.getElementById('widthInput').value, document.getElementById('heightInput').value)">Set
+                            custom size</button>
+                    </div>
+
+
+                    <h5>download Formate</h5>
+                    <div class="download ">
+                        <select id="formatSelect" style="width: 100%;">
+                            <option value="png" selected>PNG</option>
+                            <option value="svg">SVG</option>
+                            <option value="jpeg">JPEG</option>
+                        </select>
+
+                    </div> <br>
+                    <a href="#" id="downloadLink" class="btn btn-primary"
+                        onclick="downloadCanvas(this, 'canvas', document.getElementById('formatSelect').value)">Download
+                        canvas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+<script src="./Editor/jquery.min.js" type="text/javascript"></script>
+<script src="./Editor/bootstrap.min.js" type="text/javascript"></script>
+<script src="./Editor/canvas-toBlob.js" type="text/javascript"></script>
+<script src="./Editor/FileSaver.min.js" type="text/javascript"></script>
+<script src="./Editor/exif.js" type="text/javascript"></script>
+<script type="application/javascript" src="./Editor/utils.js"></script>
+<script type="application/javascript" src="./Editor/eventdispather.js"></script>
+<script type="application/javascript" src="./Editor/layer.js"></script>
+<script type="application/javascript" src="./Editor/rect.js"></script>
+<script type="application/javascript" src="./Editor/recttracker.js"></script>
+<script type="application/javascript" src="./Editor/layersview.js"></script>
+<script type="application/javascript" src="./Editor/scribblelayer.js"></script>
+<script type="application/javascript" src="./Editor/imagelayer.js"></script>
+<script type="application/javascript" src="./Editor/backgroundlayer.js"></script>
+<script type="application/javascript" src="./Editor/foregroundlayer.js"></script>
+<script type="application/javascript" src="./Editor/shadowlayer.js"></script>
+<script type="application/javascript" src="./Editor/masklayer.js"></script>
+<script type="application/javascript" src="./Editor/undostack.js"></script>
+<script type="application/javascript" src="./Editor/model.js"></script>
+<script type="application/javascript" src="./Editor/editor.js"></script>
+<script src="editor.js"></script>
+
+<script type="application/javascript">
+    //$('.collapse').collapse();
+    /*
+            if ($(window).width() < 768) {
+                $("#wrapper").toggleClass("toggled");
+            }
+    */
+    document.body.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    window.addEventListener('orientationchange', function (e) { window.location.reload(); });
+    function GetIEVersion() {
+        var sAgent = window.navigator.userAgent;
+        var Idx = sAgent.indexOf("MSIE");
+
+        // If IE, return version number.
+        if (Idx > 0)
+            return parseInt(sAgent.substring(Idx + 5, sAgent.indexOf(".", Idx)));
+
+        // If IE 11 then look for Updated user agent string.
+        else if (!!navigator.userAgent.match(/Trident\/7\./))
+            return 11;
+
+        else
+            return 0; //It is not IE
+    }
+    function updateProgress(progress, caption) {
+        if (typeof caption !== 'undefined') {
+            $('#progressDlgTitle').text(caption);
+        }
+
+        if (progress == 0) {
+            $('#progressDialog').modal('show');
+        } else if (progress == 100) {
+            $('#progressDialog').modal('hide');
+        }
+    }
+
+    function showMessage(caption, text) {
+        updateProgress(100);
+
+        if (caption) {
+            $('#messageDlgTitle').text(caption);
+        }
+
+        if (caption) {
+            $('#messageDlgText').text(text);
+        }
+
+        $('#messageDlg').modal('show');
+    }
+
+    $(document).ready(function () {
+        if (GetIEVersion() > 0) {
+            showMessage("Error", "Sorry but Internet Explorer is not supported");
+            return;
+        }
+
+        updateProgress(0, "Loading...");
+
+        var model = new Model({ "id": 878664965, "secret": "b4U5TcxBF", "date": 1672763831694, "fileName": "62a97f0ab6d8256bab344f38" });
+        model.modelLoadedEvent.attach(function () {
+            updateProgress(100);
+
+            window.editor = new Editor(model,
+                document.getElementById("leftCanvas"),
+                document.getElementById("rightCanvas"));
+
+            window.addEventListener('resize', window.editor.fitToContainer, false);
+        });
+    });
+    /*
+    $("#wrapper").on('transitionend webkitTransitionEnd oTransitionEnd', function () {
+        if($(window).width() >= 768)
+            window.editor.fitToContainer();
+    });
+    */
+
+    document.addEventListener('touchstart', function (e) {
+        if (e.touches.length > 1)
+            e.preventDefault();
+    });
+
+    checkAndCleanStorage()
+
+    // console.log(nimageUrl);
+</script>
+
+<script>
+    // Hide preloader when content is loaded
+    window.onload = function () {
+        setTimeout(function () {
+            document.getElementById("preloader").style.display = "none";
+        }, 2000);
+    }
+
+    // Show preloader function
+    function showPreloader() {
+        const preloader = document.getElementById('preloader');
+        preloader.style.display = 'block';
+    }
+
+    // Hide preloader function
+    function hidePreloader() {
+        const preloader = document.getElementById('preloader');
+        preloader.style.display = 'none';
+    }
+
+</script>
+
+</html>
